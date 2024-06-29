@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flower Prediction</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    form {
+      margin: 20px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+    #predictionResult {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Flower Prediction</h1>
+  <form id="predictionForm">
+    <label for="sepalLength">Sepal Length:</label>
+    <input type="number" id="sepalLength" name="sepalLength" step="any" required>
+    
+    <label for="sepalWidth">Sepal Width:</label>
+    <input type="number" id="sepalWidth" name="sepalWidth" step="any" required>
+    
+    <label for="petalLength">Petal Length:</label>
+    <input type="number" id="petalLength" name="petalLength" step="any" required>
+    
+    <label for="petalWidth">Petal Width:</label>
+    <input type="number" id="petalWidth" name="petalWidth" step="any" required>
+    
+    <button type="submit">Predict</button>
+  </form>
+
+  <div id="predictionResult"></div>
+
+  <script>
+    document.getElementById('predictionForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const sepalLength = document.getElementById('sepalLength').value;
+      const sepalWidth = document.getElementById('sepalWidth').value;
+      const petalLength = document.getElementById('petalLength').value;
+      const petalWidth = document.getElementById('petalWidth').value;
+
+      const response = await fetch('http://34.45.215.157:8000/predict', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          features: [sepalLength, sepalWidth, petalLength, petalWidth],
+        }),
+      });
+
+      const result = await response.json();
+      const predictionResult = document.getElementById('predictionResult');
+      if (result.prediction) {
+        predictionResult.innerText = `Prediction: ${result.prediction}`;
+      } else {
+        predictionResult.innerText = `Error: ${result.error}`;
+      }
+    });
+  </script>
+</body>
+</html>
